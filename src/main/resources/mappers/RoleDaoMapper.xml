@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmos.itframe.shiro_demo.itframe.dao.RoleDao">
+
+<!--   <insert id="saveRole">-->
+<!--       insert into roles(rid,rolename,rdesc,rval,createTime,updateTime) values(0,#{rolename},#{rdesc},#{rval},sysdate(),sysdate())-->
+<!--   </insert>-->
+<!--    <select id="queryRoleListWithSelected" parameterType="int" resultType="Role">-->
+<!--    SELECT r.id,r.roleDesc,-->
+<!--    (CASE WHEN (SELECT ur.roleId FROM user_role ur WHERE ur.userId= #{id} AND ur.roleId = r.id) THEN 1 ELSE 0 END) AS selected-->
+<!--    FROM role r-->
+<!--  </select>-->
+    <select id="findRoleListByUserId" resultType="com.cmos.itframe.shiro_demo.itframe.beans.Role">
+        select ur.rid id,r.name name from role left join user_role ur  on rid = ur.rid where ur.uid = #{userId}
+    </select>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmos.itframe.shiro_demo.itframe.dao.UserDao">
+
+    <select id="getByUserName" resultType="com.cmos.itframe.shiro_demo.itframe.beans.User">
+      select password from user where username=#{username}
+    </select>
+    <insert id="addUser">
+        insert into user(uid,username,password,salt,enable,email) values(0,#{username},#{password},#{salt},#{enable},#{email})
+    </insert>
+    <delete id="deleteById">
+        delete from user where id=#{value}
+    </delete>
+    <select id="getById" resultType="com.cmos.itframe.shiro_demo.itframe.beans.User">
+        select * from user where uid = #{id}
+    </select>
+
+</mapper>
