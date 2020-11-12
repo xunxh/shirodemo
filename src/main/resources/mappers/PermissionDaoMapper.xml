@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmos.itframe.dao.PermissionDao">
+
+    <select id="getAllPermissions" resultType="com.cmos.itframe.beans.Permission">
+        select pid,permname,url,types,parentId,remark from permission
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and  concat(IFNULL(permname,''),IFNULL(types,''),IFNULL(parentId,'')) like concat('%',#{keyWord},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addPermission">
+        insert into permission(pid,permname,url,types,parentId,remark) values(0,#{permname},#{url},#{types},#{parentId},#{remark})
+    </insert>
+
+    <update id="updatePermission">
+        update permission
+        <set>
+            <if test="permname != null and permname != ''">
+                permname=#{permname},
+            </if>
+            <if test="url != null and url != ''">
+                url=#{url},
+            </if>
+            <if test="types != null and types != ''">
+                types=#{types},
+            </if>
+            <if test="parentId !=null and parentId !=''">
+                parentId=#{parentId},
+            </if>
+            <if test="remark != null">
+                remark=#{remark}
+            </if>
+        </set>
+        where pid=#{pid}
+    </update>
+
+    <delete id="deletePermissionById">
+        delete from permission where pid=#{pid}
+    </delete>
+
+    <select id="getPermissionById" resultType="com.cmos.itframe.beans.Permission">
+        select pid,permname,url,types,parentId,remark from permission where pid=#{pid}
+    </select>
+
+    <select id="getPermissionsByIds" resultType="com.cmos.itframe.beans.Permission">
+        select pid,permname,url,types,parentId,remark from permission
+        <if test="ids != null and ids.size() > 0 ">
+            where pid in
+            <foreach collection="ids" item="id" open="(" separator="," close=")" index="index">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

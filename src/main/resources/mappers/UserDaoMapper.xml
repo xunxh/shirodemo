@@ -2,19 +2,49 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.shiro_demo.itframe.dao.UserDao">
+<mapper namespace="com.cmos.itframe.dao.UserDao">
 
-    <select id="getByUserName" resultType="com.cmos.itframe.shiro_demo.itframe.beans.User">
+    <select id="getByUserName" resultType="com.cmos.itframe.beans.User">
       select password from user where username=#{username}
     </select>
     <insert id="addUser">
-        insert into user(uid,username,password,salt,enable,email) values(0,#{username},#{password},#{salt},#{enable},#{email})
+        insert into user(uid,username,realName,password,status,email,mobile,createTime,updateTime,remark) values(0,#{username},#{realName},#{password},#{status},#{email},#{mobile},sysdate(),sysdate(),#{remark})
     </insert>
     <delete id="deleteById">
-        delete from user where id=#{value}
+        delete from user where uid=#{id}
     </delete>
-    <select id="getById" resultType="com.cmos.itframe.shiro_demo.itframe.beans.User">
-        select * from user where uid = #{id}
+    <select id="getById" resultType="com.cmos.itframe.beans.User">
+        select uid,username,realName,password,status,email,mobile,remark from user where uid = #{id}
+    </select>
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="password != null and password != ''">
+                password=#{password},
+            </if>
+            <if test="email != null and email != ''">
+                email=#{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile=#{mobile},
+            </if>
+            <if test="1">
+                updateTime=sysdate(),
+            </if>
+            <if test="1">
+                remark=#{remark}
+            </if>
+        </set>
+        where uid=#{uid}
+    </update>
+
+    <select id="getByKeyWord" resultType="com.cmos.itframe.beans.User">
+        select uid,username,realName,password,status,email,mobile,remark from user
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and  concat(IFNULL(username,''),IFNULL(realName,''),IFNULL(email,'')) like concat('%',#{keyWord},'%')
+            </if>
+        </where>
     </select>
 
 </mapper>

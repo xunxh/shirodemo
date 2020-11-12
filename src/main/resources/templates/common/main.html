@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>权限管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}" media="all"/>
+    <script type="text/javascript" th:src="@{/static/layui/layui.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-1.12.4.js}"></script>
+    <script type="text/javascript">
+        // window.onload=function loadLeftMenu() {
+        //     //发送ajax请求，加载左侧导航对应的内容
+        //     layui.use(["jquery","element"],function () {
+        //         var $ = layui.jquery;
+        //         var element = layui.element;
+        //         $.ajax({
+        //             url:"permissions/getMainPerm",
+        //             success:function(data){
+        //                 alert(data);
+        //                 var str = "";
+        //                 for(var i=0;i<data.length;i++){
+        //                     var firstMenu = data;
+        //                     alert(firstMenu);
+        //                     str+="<li class='layui-nav-item'> <a href='javascript:;'>"+firstMenu.name+"</a> <dl class='layui-nav-child'>"
+        //
+        //                     //当前一级菜单下的二级菜单
+        //                     var secondMenus = firstMenu.children;
+        //                     for(j=0;j<secondMenus.length;j++){
+        //                         var secondMenu=secondMenus[j];
+        //                         str+="<dd><a href='javascript:toAddTab("+secondMenu.id+",\""+secondMenu.href+"\",\""+secondMenu.name+"\");'>"+secondMenu.name+"</a></dd>"
+        //                     }
+        //
+        //
+        //                     //拼接闭标签
+        //                     str+="</dl></li>"
+        //
+        //                 }
+        //
+        //                 $("#leftMenu").html(str);
+        //
+        //
+        //                 //拼接的数据(动态生成的)，再展示出来效果的时候，layui是不会帮助我们进行渲染的
+        //                 //需要我们手动渲染
+        //                 element.render("nav","leftMenu");//手动渲染导航
+        //             }
+        //         })
+        //     });
+        // }
+
+        //页面结构加载完成之后自动执行函数loadLeftMenu
+
+
+        function toAddTab(id,href,name) {
+            //console.log(id+"***"+href);
+            //添加选项卡：如果要添加的选项卡已经存在就不添加，否则就添加
+            //不管是新添加的，还是已经存在的，进入到这个函数中就应该显示出来
+
+            var element = layui.element;
+            var $ = layui.jquery;
+            var len = $("li[lay-id="+id+"]").length;
+            if(len==0){
+                element.tabAdd("myTab",{
+                    title:name,
+                    content:"<iframe src=\""+href+"\" width=\"100%\" height=\"500px\"></iframe>",
+                    id:id
+                });
+            }
+            element.tabChange("myTab",id);
+        }
+    </script>
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">权限管理系统</div>
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item"><a href="">控制台</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">其它系统</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">邮件管理</a></dd>
+                        <dd><a href="">消息管理</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img th:src="@{/static/img/touxiang.jpg}" class="layui-nav-img">
+                        <span>你好!<div></div></span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">基本资料</a></dd>
+                        <dd><a href="">安全设置</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a th:href="@{/login/logout}">退出登录</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree"  lay-filter="leftMenu" id="leftMenu">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a th:href="@{/getuser}">用户管理</a>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a th:href="@{/getrole}">角色管理</a>
+
+                    </li>
+                    <li class="layui-nav-item"><a th:href="@{/getperm}">菜单管理</a></li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;">
+                <div class="layui-tab" lay-filter="myTab"  lay-allowClose="true">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">欢迎页</li>
+
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">欢迎使用权限管理系统</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © layui.com - 底部固定区域
+        </div>
+    </div>
+</body>
+</html>

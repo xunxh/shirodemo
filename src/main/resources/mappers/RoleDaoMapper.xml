@@ -2,17 +2,60 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.shiro_demo.itframe.dao.RoleDao">
+<mapper namespace="com.cmos.itframe.dao.RoleDao">
 
-<!--   <insert id="saveRole">-->
-<!--       insert into roles(rid,rolename,rdesc,rval,createTime,updateTime) values(0,#{rolename},#{rdesc},#{rval},sysdate(),sysdate())-->
-<!--   </insert>-->
-<!--    <select id="queryRoleListWithSelected" parameterType="int" resultType="Role">-->
-<!--    SELECT r.id,r.roleDesc,-->
-<!--    (CASE WHEN (SELECT ur.roleId FROM user_role ur WHERE ur.userId= #{id} AND ur.roleId = r.id) THEN 1 ELSE 0 END) AS selected-->
-<!--    FROM role r-->
-<!--  </select>-->
-    <select id="findRoleListByUserId" resultType="com.cmos.itframe.shiro_demo.itframe.beans.Role">
-        select ur.rid id,r.name name from role left join user_role ur  on rid = ur.rid where ur.uid = #{userId}
+    <select id="findRoleListByIds" resultType="com.cmos.itframe.beans.Role">
+        select rid,rolename,roleLevel,status,remark from role
+        <if test="ids != null and ids.size() > 0 ">
+            where rid in
+            <foreach collection="ids" item="id" open="(" separator="," close=")" index="index">
+                #{id}
+            </foreach>
+        </if>
     </select>
+
+    <select id="getRoles" resultType="com.cmos.itframe.beans.Role">
+        select rid,rolename,roleLevel,status,remark from role
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and  concat(IFNULL(rolename,'')) like concat('%',#{keyWord},'%')
+            </if>
+        </where>
+    </select>
+
+    <update id="updateRole">
+        update role
+        <set>
+            <if test="rolename != null and rolename != ''">
+                rolename=#{rolename},
+            </if>
+            <if test="roleLevel != null and roleLevel != ''">
+                roleLevel=#{roleLevel},
+            </if>
+            <if test="status != null and status != ''">
+                status=#{status},
+            </if>
+            <if test="remark != null">
+                remark=#{remark}
+            </if>
+        </set>
+        where rid=#{rid}
+    </update>
+
+    <delete id="deleteRoleById">
+        delete from role where rid=#{rid}
+    </delete>
+
+    <insert id="addRole">
+        insert into role(rid,rolename,roleLevel,status,remark) values(0,#{rolename},#{roleLevel},#{status},#{remark})
+    </insert>
+
+    <select id="getRoleById" resultType="com.cmos.itframe.beans.Role">
+        select rid,rolename,roleLevel,status,remark from role where rid=#{rid}
+    </select>
+
+    <select id="getAllRoles" resultType="com.cmos.itframe.beans.Role">
+        select rid,rolename,roleLevel,status,remark from role
+    </select>
+
 </mapper>

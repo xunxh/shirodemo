@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>所有角色信息</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}"  media="all"/>
+    <script th:src="@{/static/layui/layui.js}"type="text/javascript"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-1.12.4.js}"></script>
+    <script type="text/javascript">
+            //数据展示
+            layui.use('table', function(){
+                var table = layui.table;
+                //第一个实例
+                table.render({
+                    elem: '#Roles'
+                    ,url: 'roles/getAllRoles' //数据接口
+                    ,page: true //开启分页
+                    ,limit:10
+                    ,toolbar:"#caozuoToolbar"//id选择器的写法
+                    ,cols: [
+                        [ //表头
+                            {field: 'rid', title: 'ID', sort: true, fixed: 'left',width:100}
+                            ,{field: 'rolename', title: '角色名称',width:200}
+                            ,{field: 'roleLevel', title: '角色级别',width:150}
+                            ,{field: 'status', title: '状态',templet:"#zhuangtai",width:150}
+                            , {field: 'remark', title: '备注',width:200}
+                            ,{title:"操作",templet:"#caoZuo"}
+                        ]
+                    ]
+                });
+
+            });
+
+            function doAdd(){
+                layui.use(["form","layer","table","jquery"],function () {
+                    var form = layui.form;
+                    var layer = layui.layer;
+                    var table = layui.table;
+                    form.on("submit(add)",function(data){
+                        //console.log(data);
+                        $.ajax({
+                            url:"roles/addRole",
+                            data:data.field,
+                            type:"post",
+                            success:function(data){
+                                //console.log(data)
+                                //1.关闭掉添加弹出层
+                                layer.closeAll('page');
+
+                                //2.提示添加成功
+                                if(data.isAdd){
+                                    layer.alert("添加成功",{time:3000});
+                                }else{
+                                    layer.alert("添加失败",{time:3000});
+                                }
+                                //3.刷新table
+                                table.reload("Roles");
+                            }
+                        })
+                        return false;//阻止跳转；
+                    });
+
+                });
+
+            }
+
+            function doUpdate1(){
+                layui.use(["form","layer","table","jquery"],function () {
+                    var form = layui.form;
+                    var layer = layui.layer;
+                    var table = layui.table;
+                    form.on("submit(update)", function (data) {
+                        //console.log(data);
+                        $.ajax({
+                            url: "roles/updateRole",
+                            data: data.field,
+                            type: "post",
+                            success: function (data) {
+                                //console.log(data)
+                                //1.关闭掉添加弹出层
+                                layer.closeAll('page');
+
+                                //2.提示添加成功
+                                if (data.isUpdate) {
+                                    layer.alert("修改成功", {time: 3000});
+                                } else {
+                                    layer.alert("修改失败", {time: 3000});
+                                }
+                                //3.刷新table
+                                table.reload("Roles");
+                            }
+                        })
+                        return false;//阻止跳转；
+                    });
+                });
+
+            }
+           //搜索操作
+           function doSearch() {
+               //1.获取到输入框中输入的内容
+               var keyWord = jQuery("#keyWord").val();
+               //发送请求，并且接收数据
+               layui.use('table', function() {
+                   var table = layui.table;
+
+                   table.reload('Roles', {
+                       where: {"keyWord":keyWord}
+                   });
+               });
+           }
+
+           //添加弹出层
+           function doOpenAddLayer() {
+
+               layui.use(['layer','jquery'], function(){
+                   var $ = layui.jquery;
+                   $("#rid").val(0);
+                   $("#rolename").val("");
+                   $("[id=rolename]:input").attr("readonly", false);
+                   $("#roleLevel").val("");
+                   $("#status").val("");
+                   $("#remark").val("");
+                   $("#updateSubmitBtn").hide();
+                   $("#addSubmitBtn").show();
+                   layer.open({
+                       title:"添加角色信息",
+                       content:$("#addForm"),
+                       type:1,
+                       // maxmin:true
+                   })
+               });
+
+           }
+
+           //修改角色信息
+           function doOpenUpdateLayer(id) {
+               layui.use('jquery',function(){
+                   var a = layui.jquery;
+                   $.ajax({
+                       url:"roles/getRoleById",
+                       data:"rid="+id,
+                       success:function(data){
+                           a("#rid").val(data.rid);
+                           a("#rolename").val(data.rolename);
+                           a("#roleLevel").val(data.roleLevel);
+                           a("#status").val(data.status);
+                           a("#remark").val(data.remark);
+                       }
+                   });
+               })
+               $("[id=rolename]:input").attr("readonly", true).css("color","#888");
+               $("#addSubmitBtn").hide();
+               $("#updateSubmitBtn").show();
+               //2.
+               layui.use('layer', function(){
+                   layer.open({
+                       title:"修改角色信息",
+                       content:$("#addForm"),
+                       type:1,
+                       // maxmin:true
+                   })
+               });
+           }
+           function doDelete(id) {
+               //确认；如果点击确认删除；否则不删除
+               layui.use(['layer','table','jquery'], function(){
+                   var table = layui.table;
+                   var $ = layui.jquery;
+                   layer.confirm('确定真的要把我干掉吗？', {icon: 3, title:'确认删除'}, function(index){
+                       $.ajax({
+                           url:"roles/deleteRole",
+                           data:"rid="+id,
+                           success:function(data){
+                               layer.alert(data.isDelete,{time:2000});
+                               table.reload("Roles");
+                               layer.close(index);
+
+                           }
+                       })
+                   });
+               });
+
+           }
+
+           function doPermManage(id){
+                layui.use(['form','table','layer'],function(){
+                    var form=layui.form;
+                    var table=layui.table;
+                    var layer=layui.layer;
+                    $.ajax({
+                        url:
+                    })
+                });
+           }
+    </script>
+
+    <script id="caoZuo" type="text/html">
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenUpdateLayer('{{d.rid}}')">信息修改</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.rid}}')">权限管理</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.rid}}')">删除角色</button>
+    </script>
+
+    <script type="text/html" id="zhuangtai">
+        {{#  if(d.status==0){ }}
+            不可用
+        {{#  } else { }}
+            可用
+        {{#  } }}
+    </script>
+
+</head>
+<body>
+
+    <table id="Roles"></table>
+
+    <div id="caozuoToolbar" style="display: none">
+
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">
+            <i class="layui-icon">&#xe608;</i> 添加
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doMultiDelete()">
+            <i class="layui-icon layui-icon-delete"></i>批量删除
+        </button>
+        <div class="layui-inline">
+            <label class="layui-form-label">角色信息:</label>
+            <div class="layui-input-inline" style="width: 200px;height: 10px;">
+                <input type="text" class="layui-input" id="keyWord">
+            </div>
+            <div class="layui-input-inline" style="width: 100px;height: 10px;">
+                <button type="button" class="layui-btn layui-btn-normal" onclick="doSearch()">
+                    <i class="layui-icon layui-icon-search"></i> 搜索
+                </button>
+            </div>
+        </div>
+
+    </div>
+<!--    //修改表单-->
+    <form id="addForm" style="display: none" class="layui-form">
+        <input type="hidden" id="rid" name="rid"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名</label>
+            <div class="layui-input-inline">
+                <input name="rolename" id="rolename" class="layui-input" placeholder="请输入角色名" lay-verify="required|rolename"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色等级</label>
+            <div class="layui-input-block">
+                <select name="roleLevel" lay-verify="required">
+                    <option value=""></option>
+                    <option value="0">超级管理员</option>
+                    <option value="1">管理员</option>
+                    <option value="2">普通用户</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="0" title="不可用">
+                <input type="radio" name="status" value="1" title="可用" checked>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-inline">
+                <input name="remark" id="remark" class="layui-input" placeholder="请输入备注"/>
+            </div>
+        </div>
+        <div class="layui-form-item" align="center">
+            <button lay-submit type="button" lay-filter="add" class="layui-btn" id="addSubmitBtn" onclick="doAdd()">添加角色</button>
+            <button lay-submit type="button" lay-filter="update" class="layui-btn" id="updateSubmitBtn" onclick="doUpdate1()">修改角色</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </form>
+
+
+    <form id="permForm" style="display: none" class="layui-form">
+        <input type="hidden" id="rid1" name="rid"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-inline">
+                <input name="rolename" id="rolename1" class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限名称</label>
+            <div class="layui-input-block">
+                <select name="types" lay-verify="required">
+                    <option value=""></option>
+                    <option value="1">菜单</option>
+                    <option value="2">按钮</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级路径Id</label>
+            <div class="layui-input-inline">
+                <input name="parentId" id="parentId" class="layui-input" placeholder="请输入父级路径Id" />
+            </div>
+        </div>
+        <div class="layui-form-item" align="center">
+            <button lay-submit type="button" lay-filter="update" class="layui-btn">修改权限</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </form>
+
+</body>
+</html>
