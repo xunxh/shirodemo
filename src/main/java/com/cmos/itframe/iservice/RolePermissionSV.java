@@ -8,4 +8,5 @@ import java.util.Map;
 public interface RolePermissionSV {
     Map addRolePermRelationShip(RolePermDto rolePermDto);
     Map deleteRolePermByPids(Integer[] ids);
+    RolePermDto getRolePermsByRid(Integer rid);
 }

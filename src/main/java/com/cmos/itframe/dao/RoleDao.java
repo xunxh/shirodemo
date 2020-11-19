@@ -14,4 +14,5 @@ public interface RoleDao {
     int addRole(Role role);
     Role getRoleById(@Param("rid")Integer rid);
     List<Role> getAllRoles();
+    List<Role> getRoleIdAndRoleName();
 }

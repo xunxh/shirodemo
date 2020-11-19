@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -48,6 +49,12 @@ public class RoleController {
     @RequestMapping("/getRoleById")
     public @ResponseBody Role getRoleById(@RequestParam(value = "rid",required = false) Integer rid){
         return roleSV.getRoleById(rid);
+    }
+
+    //获取角色id和角色名字
+    @RequestMapping("/getRoleIdAndRoleName")
+    public @ResponseBody List<Role> getRoleIdAndRoleName(){
+        return roleSV.getRoleIdAndRoleName();
     }
 
 }

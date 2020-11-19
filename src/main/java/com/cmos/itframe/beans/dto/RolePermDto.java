@@ -1,9 +1,15 @@
 package com.cmos.itframe.beans.dto;
 
+import com.cmos.itframe.beans.Permission;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class RolePermDto {
     private Integer rpid;
     private Integer rid;
-    private Integer[] pids;
+    private String rolename;
+    private List<Permission> permissionList;
 
     public Integer getRpid() {
         return rpid;
@@ -21,19 +27,19 @@ public class RolePermDto {
         this.rid = rid;
     }
 
-    public Integer[] getPids() {
-        return pids;
+    public String getRolename() {
+        return rolename;
     }
 
-    public void setPids(Integer[] pids) {
-        this.pids = pids;
+    public void setRolename(String rolename) {
+        this.rolename = rolename;
     }
 
-    public RolePermDto() {
+    public List<Permission> getPermissionList() {
+        return permissionList;
     }
 
-    public RolePermDto(Integer rid, Integer[] pids) {
-        this.rid = rid;
-        this.pids = pids;
+    public void setPermissionList(List<Permission> permissionList) {
+        this.permissionList = permissionList;
     }
 }

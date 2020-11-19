@@ -18,6 +18,12 @@ public class RoleSVImpl implements RoleSV {
 
     @Override
     public Map getRoles(String keyWord,Integer page,Integer limit) {
+        if(page==null){
+            page=1;
+        }
+        if(limit==null){
+            limit=9999;
+        }
         Map maps=new HashMap();
         List<Role> roleList=roleDao.getRoles(keyWord);
         //角色信息按照等级排序
@@ -81,5 +87,10 @@ public class RoleSVImpl implements RoleSV {
     @Override
     public Role getRoleById(Integer rid) {
         return roleDao.getRoleById(rid);
+    }
+
+    @Override
+    public List<Role> getRoleIdAndRoleName() {
+        return roleDao.getRoleIdAndRoleName();
     }
 }

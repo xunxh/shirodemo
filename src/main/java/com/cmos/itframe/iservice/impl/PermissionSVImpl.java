@@ -136,6 +136,7 @@ public class PermissionSVImpl implements PermissionSV {
                     permDto.setChildren(permDtoList);
                     permDtos.add(permDto);
                 }
+                System.out.println(permDtos);
             }
         }
         map.put("code",0);

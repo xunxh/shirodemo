@@ -112,8 +112,9 @@
            //添加弹出层
            function doOpenAddLayer() {
 
-               layui.use(['layer','jquery'], function(){
+               layui.use(['layer','jquery','form'], function(){
                    var $ = layui.jquery;
+                   var form = layui.form;
                    $("#rid").val(0);
                    $("#rolename").val("");
                    $("[id=rolename]:input").attr("readonly", false);
@@ -122,6 +123,7 @@
                    $("#remark").val("");
                    $("#updateSubmitBtn").hide();
                    $("#addSubmitBtn").show();
+                   form.render();
                    layer.open({
                        title:"添加角色信息",
                        content:$("#addForm"),
@@ -131,11 +133,26 @@
                });
 
            }
+            window.onload=function(){
+                layui.use("form",function(){
+                    var form = layui.form;
+                    $.ajax({
+                        url: 'roles/getRoleIdAndRoleName', //数据接口
+                        success:function(data) {
+                            $.each(data, function (index, item) {
+                                $("#roleLevel").append(new Option(item.rolename, item.roleLevel));//下拉菜单里面添加元素
+                            });
+                            form.render("select", "roleForm");
+                        }
+                    });
+                })
 
+            }
            //修改角色信息
            function doOpenUpdateLayer(id) {
-               layui.use('jquery',function(){
+               layui.use(['jquery','form'],function(){
                    var a = layui.jquery;
+                   var form = layui.form;
                    $.ajax({
                        url:"roles/getRoleById",
                        data:"rid="+id,
@@ -145,9 +162,11 @@
                            a("#roleLevel").val(data.roleLevel);
                            a("#status").val(data.status);
                            a("#remark").val(data.remark);
+                           form.render();
                        }
                    });
-               })
+
+               });
                $("[id=rolename]:input").attr("readonly", true).css("color","#888");
                $("#addSubmitBtn").hide();
                $("#updateSubmitBtn").show();
@@ -183,16 +202,50 @@
            }
 
            function doPermManage(id){
-                layui.use(['form','table','layer'],function(){
+                layui.use(['form','table','layer','jquery','transfer'],function(){
                     var form=layui.form;
                     var table=layui.table;
                     var layer=layui.layer;
+                    var $=layui.jquery;
+                    var transfer=layui.transfer;
                     $.ajax({
-                        url:
-                    })
+                        url:"rolePerm/getRolePerms",
+                        data:"rid="+id,
+                        success:function(data){
+                            $("#rid1").val(data.rid);
+                            $("#rolename1").val(data.rolename);
+                            var item=data.permissionList;
+                            transfer.render({
+                                elem: '#permissions'  //绑定元素
+                                ,data: item
+                                ,title:['暂无权限','已有权限']
+                                ,parseData:function(res){
+                                    return{
+                                        "value":res.pid,//数据值
+                                        "disabled":res.disabled,//是否禁用
+                                        "checked":res.checked,//是否选中
+                                        "title":res.permname//数据标题
+                                    }
+                                }
+                                ,id: 'demo1' //定义索引
+                            });
+                            //form.render("select");
+
+                        }
+                    });
+                    layui.use('layer', function(){
+                        layer.open({
+                            title:"修改权限信息",
+                            content:$("#permForm"),
+                            type:1,
+                            //area:['400px','300px']
+                            // maxmin:true
+                        })
+                    });
                 });
            }
     </script>
+
 
     <script id="caoZuo" type="text/html">
         <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenUpdateLayer('{{d.rid}}')">信息修改</button>
@@ -235,47 +288,47 @@
 
     </div>
 <!--    //修改表单-->
-    <form id="addForm" style="display: none" class="layui-form">
-        <input type="hidden" id="rid" name="rid"/>
-        <div class="layui-form-item">
-            <label class="layui-form-label">角色名</label>
-            <div class="layui-input-inline">
-                <input name="rolename" id="rolename" class="layui-input" placeholder="请输入角色名" lay-verify="required|rolename"/>
+    <div class="layui-form" lay-filter="roleForm">
+        <div id="addForm" style="display: none" class="layui-form">
+            <input type="hidden" id="rid" name="rid"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名</label>
+                <div class="layui-input-inline">
+                    <input name="rolename" id="rolename" class="layui-input" placeholder="请输入角色名" lay-verify="required|rolename"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色等级</label>
+                <div class="layui-input-block">
+                    <select name="roleLevel" lay-verify="required" id="roleLevel">
+                        <option value="">---请选择---</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="status" value="0" title="不可用">
+                    <input type="radio" name="status" value="1" title="可用" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input name="remark" id="remark" class="layui-input" placeholder="请输入备注"/>
+                </div>
+            </div>
+            <div class="layui-form-item" align="center">
+                <button lay-submit type="button" lay-filter="add" class="layui-btn" id="addSubmitBtn" onclick="doAdd()">添加角色</button>
+                <button lay-submit type="button" lay-filter="update" class="layui-btn" id="updateSubmitBtn" onclick="doUpdate1()">修改角色</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">角色等级</label>
-            <div class="layui-input-block">
-                <select name="roleLevel" lay-verify="required">
-                    <option value=""></option>
-                    <option value="0">超级管理员</option>
-                    <option value="1">管理员</option>
-                    <option value="2">普通用户</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
-            <div class="layui-input-block">
-                <input type="radio" name="status" value="0" title="不可用">
-                <input type="radio" name="status" value="1" title="可用" checked>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">备注</label>
-            <div class="layui-input-inline">
-                <input name="remark" id="remark" class="layui-input" placeholder="请输入备注"/>
-            </div>
-        </div>
-        <div class="layui-form-item" align="center">
-            <button lay-submit type="button" lay-filter="add" class="layui-btn" id="addSubmitBtn" onclick="doAdd()">添加角色</button>
-            <button lay-submit type="button" lay-filter="update" class="layui-btn" id="updateSubmitBtn" onclick="doUpdate1()">修改角色</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-        </div>
-    </form>
+    </div>
 
 
-    <form id="permForm" style="display: none" class="layui-form">
+
+    <div id="permForm" style="display: none" class="layui-form">
         <input type="hidden" id="rid1" name="rid"/>
         <div class="layui-form-item">
             <label class="layui-form-label">角色名称</label>
@@ -283,27 +336,17 @@
                 <input name="rolename" id="rolename1" class="layui-input"/>
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" id="permissions">
             <label class="layui-form-label">权限名称</label>
-            <div class="layui-input-block">
-                <select name="types" lay-verify="required">
-                    <option value=""></option>
-                    <option value="1">菜单</option>
-                    <option value="2">按钮</option>
-                </select>
-            </div>
+
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">父级路径Id</label>
-            <div class="layui-input-inline">
-                <input name="parentId" id="parentId" class="layui-input" placeholder="请输入父级路径Id" />
-            </div>
-        </div>
+
+
         <div class="layui-form-item" align="center">
             <button lay-submit type="button" lay-filter="update" class="layui-btn">修改权限</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
-    </form>
+    </div>
 
 </body>
 </html>

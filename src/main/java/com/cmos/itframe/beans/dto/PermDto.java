@@ -39,4 +39,14 @@ public class PermDto {
     public void setChildren(List<PermDto> children) {
         this.children = children;
     }
+
+    @Override
+    public String toString() {
+        return "PermDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", href='" + href + '\'' +
+                ", children=" + children +
+                '}';
+    }
 }

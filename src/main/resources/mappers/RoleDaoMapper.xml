@@ -58,4 +58,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select rid,rolename,roleLevel,status,remark from role
     </select>
 
+    <select id="getRoleIdAndRoleName" resultType="com.cmos.itframe.beans.Role">
+        select rid,rolename,roleLevel from role
+    </select>
+
 </mapper>
