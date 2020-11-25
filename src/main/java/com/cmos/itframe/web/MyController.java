@@ -19,7 +19,7 @@ public class MyController {
 
     @RequestMapping("/getuser")
     public String getuser(){
-        return "user/showAllusers";
+        return "user/showAllUsers";
     }
 
     @RequestMapping("/getrole")
@@ -29,7 +29,8 @@ public class MyController {
 
     @RequestMapping("/getperm")
     public String getperm(){
-        return "permission/showAllPermissions";
+        System.out.println(1111);
+        return "permission/showAllPermission";
     }
 
     @RequestMapping("/getMainPermissions")

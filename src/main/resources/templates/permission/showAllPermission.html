@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
-    <title>所有用户信息</title>
+    <title>所有权限信息</title>
     <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}"  media="all"/>
     <script th:src="@{/static/layui/layui.js}"type="text/javascript"></script>
     <script type="text/javascript" th:src="@{/static/js/jquery-1.12.4.js}"></script>
@@ -10,38 +10,27 @@
             //数据展示
             layui.use('table', function(){
                 var table = layui.table;
+                console.log("用户");
                 //第一个实例
                 table.render({
-                    elem: '#users'
-                    ,url: 'users/getUsers' //数据接口
-                    //,data:"roleId"+roleId
+                    elem: '#Permissions'
+                    ,url: 'permissions/getAllPermissions' //数据接口
                     ,page: true //开启分页
                     ,limit:10
-                    ,limits:[5,10,20]
                     ,toolbar:"#caozuoToolbar"//id选择器的写法
                     ,cols: [
                         [ //表头
-                            {field: 'uid', title: 'ID', width:80, sort: true, fixed: 'left'}
-                            ,{field: 'username', title: '用户名称',width:120}
-                            ,{field: 'realName', title: '真实姓名',width:120}
-                            ,{field: 'status', title: '状态',templet:"#zhuangtai",width:80}
-                            ,{field: 'email', title: '邮箱',width:180}
-                            ,{field: 'mobile', title: '联系方式',width:180}
-                            ,{field:'rolename', title: '角色',templet:"<div>{{d.roles[0].rolename}}</div>",width:150}
-                            , {field: 'remark', title: '备注',width:150}
-                            ,{title:"操作",templet:"#caoZuo",width:180}
+                            {field: 'pid', title: 'ID', sort: true, fixed: 'left'}
+                            ,{field: 'permname', title: '权限名称'}
+                            ,{field: 'url', title: 'url路径'}
+                            ,{field: 'types', title: '权限类型',templet:"#zhuangtai"}
+                            , {field: 'parentId', title: '父级路径'}
+                            , {field: 'remark', title: '备注'}
+                            ,{title:"操作",templet:"#caoZuo"}
                         ]
                     ]
                 });
 
-            });
-            //表单验证
-            layui.use(["form","layer","table"],function () {
-                var form = layui.form;
-                var pwd1=$("#password1");
-                form.verify({
-                    password:[pwd1,"两次输入的密码不一样！"]
-                });
             });
 
 
@@ -53,7 +42,7 @@
                     form.on("submit(add)",function(data){
                         //console.log(data);
                         $.ajax({
-                            url:"users/addUser",
+                            url:"permissions/addPermission",
                             data:data.field,
                             type:"post",
                             success:function(data){
@@ -68,7 +57,7 @@
                                     layer.alert("添加失败",{time:3000});
                                 }
                                 //3.刷新table
-                                table.reload("users");
+                                table.reload("Permissions");
                             }
                         })
                         return false;//阻止跳转；
@@ -86,7 +75,7 @@
                     form.on("submit(update)", function (data) {
                         //console.log(data);
                         $.ajax({
-                            url: "users/updateUser",
+                            url: "permissions/updatePermission",
                             data: data.field,
                             type: "post",
                             success: function (data) {
@@ -101,7 +90,7 @@
                                     layer.alert("修改失败", {time: 3000});
                                 }
                                 //3.刷新table
-                                table.reload("users");
+                                table.reload("Permissions");
                             }
                         })
                         return false;//阻止跳转；
@@ -109,9 +98,6 @@
                 });
 
             }
-
-
-
            //搜索操作
            function doSearch() {
                //1.获取到输入框中输入的内容
@@ -120,7 +106,7 @@
                layui.use('table', function() {
                    var table = layui.table;
 
-                   table.reload('users', {
+                   table.reload('Permissions', {
                        where: {"keyWord":keyWord}
                    });
                });
@@ -128,24 +114,20 @@
 
            //添加弹出层
            function doOpenAddLayer() {
+
                layui.use(['layer','jquery'], function(){
                    var $ = layui.jquery;
-                   //$("#uid").val(0);
-                   $("#uid").val(0);
-                   $("#username").val('');
-                   $("[id=username]:input").attr("readonly", false);
-                   $("#realName").val('');
-                   $("#password").val('');
-                   $("#password1").val('');
-                   $("#email").val('');
-                   $("#mobile").val('');
-                   $("#remark").val('');
-                   $("#pwd").show();
-                   $("#pwd1").show();
+                   $("#pid").val(0);
+                   $("#permname").val("");
+                   $("[id=permname]:input").attr("readonly", false);
+                   $("#url").val("");
+                   $("#types").val("");
+                   $("#parentId").val("");
+                   $("#remark").val("");
                    $("#updateSubmitBtn").hide();
                    $("#addSubmitBtn").show();
                    layer.open({
-                       title:"添加用户信息",
+                       title:"添加权限信息",
                        content:$("#addForm"),
                        type:1,
                        // maxmin:true
@@ -154,39 +136,38 @@
 
            }
 
-           //修改用户信息
+           //修改权限信息
            function doOpenUpdateLayer(id) {
                layui.use('jquery',function(){
                    var a = layui.jquery;
                    $.ajax({
-                       url:"users/getUserById",
-                       data:"uid="+id,
+                       url:"permissions/getPermissionById",
+                       data:"pid="+id,
                        success:function(data){
-                           a("#uid").val(data.uid);
-                           a("#username").val(data.username);
-                           a("#realName").val(data.realName);
-                           $("#password").val('');
-                           $("#password1").val('');
-                           a("#email").val(data.email);
-                           a("#mobile").val(data.mobile);
+                           a("#pid").val(data.pid);
+                           a("#permname").val(data.permname);
+                           a("#url").val(data.url);
+                           a("#types").val(data.types);
+                           a("#parentId").val(data.parentId);
                            a("#remark").val(data.remark);
                        }
                    });
                })
-               $("[id=username]:input").attr("readonly", true).css("color","#888");
+               $("[id=permname]:input").attr("readonly", true).css("color","#888");
                $("#addSubmitBtn").hide();
                $("#updateSubmitBtn").show();
 
                //2.
                layui.use('layer', function(){
                    layer.open({
-                       title:"修改用户信息",
+                       title:"修改权限信息",
                        content:$("#addForm"),
                        type:1,
                        // maxmin:true
                    })
                });
            }
+
            function doDelete(id) {
                //确认；如果点击确认删除；否则不删除
                layui.use(['layer','table','jquery'], function(){
@@ -194,11 +175,11 @@
                    var $ = layui.jquery;
                    layer.confirm('确定真的要把我干掉吗？', {icon: 3, title:'确认删除'}, function(index){
                        $.ajax({
-                           url:"users/deleteUser",
-                           data:"uid="+id,
+                           url:"permissions/deletePermission",
+                           data:"pid="+id,
                            success:function(data){
                                layer.alert(data.isDelete,{time:2000});
-                               table.reload("users");
+                               table.reload("Permissions");
                                layer.close(index);
 
                            }
@@ -210,25 +191,26 @@
     </script>
 
     <script id="caoZuo" type="text/html">
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.uid}}')">修改</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.pid}}')">修改</button>
 
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.uid}}')">删除</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.pid}}')">删除</button>
     </script>
 
     <script type="text/html" id="zhuangtai">
-        {{#  if(d.status==0){ }}
-            离职
-        {{#  } else { }}
-            在职
+        {{#  if(d.types==1){ }}
+            菜单
+        {{#  } else{ }}
+            按钮
         {{#  } }}
     </script>
 
 </head>
 <body>
 
-    <table id="users"></table>
+    <table id="Permissions"></table>
 
     <div id="caozuoToolbar" style="display: none">
+
         <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">
             <i class="layui-icon">&#xe608;</i> 添加
         </button>
@@ -236,7 +218,7 @@
             <i class="layui-icon layui-icon-delete"></i> 批量删除
         </button>
         <div class="layui-inline">
-            <label class="layui-form-label">用户信息:</label>
+            <label class="layui-form-label">权限信息:</label>
             <div class="layui-input-inline" style="width: 200px;height: 10px;">
                 <input type="text" class="layui-input" id="keyWord">
             </div>
@@ -250,48 +232,33 @@
     </div>
 <!--    //修改表单-->
     <form id="addForm" style="display: none" class="layui-form">
-        <input name="uid" id="uid" type="hidden"/>
+        <input type="hidden" id="pid" name="pid"/>
         <div class="layui-form-item">
-            <label class="layui-form-label">用户名</label>
+            <label class="layui-form-label">权限名称</label>
             <div class="layui-input-inline">
-                <input name="username" id="username" class="layui-input" placeholder="请输入用户名" lay-verify="required|username"/>
+                <input name="permname" id="permname" class="layui-input" placeholder="请输入权限名称" lay-verify="required|permname"/>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">真实姓名</label>
+            <label class="layui-form-label">权限url</label>
             <div class="layui-input-inline">
-                <input name="realName" id="realName" class="layui-input" placeholder="请输入真实姓名" lay-verify="required|realName"/>
+                <input name="url" id="url" class="layui-input" placeholder="请输入权限路径" lay-verify="required"/>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码</label>
-            <div class="layui-input-inline">
-                <input type="password" name="password" id="password" class="layui-input" placeholder="若不修改请输入原密码，修改请输入新密码"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">确认密码</label>
-            <div class="layui-input-inline">
-                <input type="password" name="password" id="password1" class="layui-input" placeholder="请确认密码"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
+            <label class="layui-form-label">权限类型</label>
             <div class="layui-input-block">
-                <input type="radio" name="status" value="0" title="离职">
-                <input type="radio" name="status" value="1" title="在职" checked>
+                <select name="types" lay-verify="required">
+                    <option value=""></option>
+                    <option value="1">菜单</option>
+                    <option value="2">按钮</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">邮箱</label>
+            <label class="layui-form-label">父级路径Id</label>
             <div class="layui-input-inline">
-                <input name="email" id="email" class="layui-input" placeholder="请输入邮箱" lay-verify="required|email"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">联系方式</label>
-            <div class="layui-input-inline">
-                <input name="mobile" id="mobile" class="layui-input" placeholder="请输入联系方式" lay-verify="required|mobile"/>
+                <input name="parentId" id="parentId" class="layui-input" placeholder="请输入父级路径Id" />
             </div>
         </div>
         <div class="layui-form-item">
@@ -301,8 +268,8 @@
             </div>
         </div>
         <div class="layui-form-item" align="center">
-            <button lay-submit type="button" lay-filter="add" class="layui-btn" id="addSubmitBtn" onclick="doAdd()">添加用户</button>
-            <button lay-submit type="button" lay-filter="update" class="layui-btn" id="updateSubmitBtn" onclick="doUpdate1()">修改用户</button>
+            <button lay-submit type="button" lay-filter="add" class="layui-btn" id="addSubmitBtn" onclick="doAdd()">添加权限</button>
+            <button lay-submit type="button" lay-filter="update" class="layui-btn" id="updateSubmitBtn" onclick="doUpdate1()">修改权限</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </form>

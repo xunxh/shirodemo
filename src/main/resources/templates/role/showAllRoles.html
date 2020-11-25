@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}"  media="all"/>
     <script th:src="@{/static/layui/layui.js}"type="text/javascript"></script>
     <script type="text/javascript" th:src="@{/static/js/jquery-1.12.4.js}"></script>
+<!--    <script type="text/javascript" th:src="@{/static/layui/xm-select.js}"></script>-->
     <script type="text/javascript">
+
             //数据展示
             layui.use('table', function(){
                 var table = layui.table;
@@ -19,11 +21,11 @@
                     ,toolbar:"#caozuoToolbar"//id选择器的写法
                     ,cols: [
                         [ //表头
-                            {field: 'rid', title: 'ID', sort: true, fixed: 'left',width:100}
-                            ,{field: 'rolename', title: '角色名称',width:200}
-                            ,{field: 'roleLevel', title: '角色级别',width:150}
-                            ,{field: 'status', title: '状态',templet:"#zhuangtai",width:150}
-                            , {field: 'remark', title: '备注',width:200}
+                            {field: 'rid', title: 'ID', sort: true, fixed: 'left',width:60}
+                            ,{field: 'rolename', title: '角色名称',width: 100}
+                            ,{field: 'roleLevel', title: '角色级别',width: 100}
+                            ,{field: 'status', title: '状态',templet:"#zhuangtai",width: 60}
+                            , {field: 'remark', title: '备注'}
                             ,{title:"操作",templet:"#caoZuo"}
                         ]
                     ]
@@ -167,7 +169,7 @@
                    });
 
                });
-               $("[id=rolename]:input").attr("readonly", true).css("color","#888");
+               $("[id=rolename]:input").attr("readonly", true).css("color","#888888");
                $("#addSubmitBtn").hide();
                $("#updateSubmitBtn").show();
                //2.
@@ -202,7 +204,12 @@
            }
 
            function doPermManage(id){
-                layui.use(['form','table','layer','jquery','transfer'],function(){
+               layui.config({
+                   base: '/shiro_demo/static/layui/'
+               }).extend({
+                   xmSelect: 'xm-select'
+               }).use(['xmSelect','form','table','layer','jquery','transfer'],function(){
+                    var xmSelect = layui.xmSelect;
                     var form=layui.form;
                     var table=layui.table;
                     var layer=layui.layer;
@@ -212,22 +219,22 @@
                         url:"rolePerm/getRolePerms",
                         data:"rid="+id,
                         success:function(data){
+
                             $("#rid1").val(data.rid);
                             $("#rolename1").val(data.rolename);
-                            var item=data.permissionList;
-                            transfer.render({
-                                elem: '#permissions'  //绑定元素
-                                ,data: item
-                                ,title:['暂无权限','已有权限']
-                                ,parseData:function(res){
-                                    return{
-                                        "value":res.pid,//数据值
-                                        "disabled":res.disabled,//是否禁用
-                                        "checked":res.checked,//是否选中
-                                        "title":res.permname//数据标题
-                                    }
-                                }
-                                ,id: 'demo1' //定义索引
+                            var items=data.permissionList;
+                            var demo = xmSelect.render({
+                                el: '#demo',
+                                toolbar: {show: true},
+                                prop:{
+                                    name:'permname',
+                                    value:'pid'
+                                },
+                                data: []
+                            })
+                            demo.update({
+                                data:items,
+                                autoRow:true
                             });
                             //form.render("select");
 
@@ -243,7 +250,13 @@
                         })
                     });
                 });
+
+
+
            }
+    </script>
+    <script>
+
     </script>
 
 
@@ -338,7 +351,7 @@
         </div>
         <div class="layui-form-item" id="permissions">
             <label class="layui-form-label">权限名称</label>
-
+            <div id="demo" th:align="right" style="width:200px" class="xm-select-demo"></div>
         </div>
 
 

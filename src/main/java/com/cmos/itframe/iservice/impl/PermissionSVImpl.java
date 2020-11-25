@@ -90,7 +90,8 @@ public class PermissionSVImpl implements PermissionSV {
         User user= (User) session.getAttribute("user");
         //得到当前用户对应的角色
         UserRoleRelationShip roleRelationShip=new UserRoleRelationShip();
-        roleRelationShip.setUid(user.getUid());
+//        roleRelationShip.setUid(user.getUid());
+        roleRelationShip.setUid(2);
         List<UserRoleRelationShip> userRoleRelationShips= userRoleRelationShipDao.getUserRoleRelationships(roleRelationShip);
         Set<Integer> ids=new HashSet<>();
         List<Permission> permissions=new ArrayList<>();
@@ -117,6 +118,13 @@ public class PermissionSVImpl implements PermissionSV {
                     pids.add(rolePermissionRelationShips.get(j).getPid());
                 }
                 permissions=permissionDao.getPermissionsByIds(pids);
+                List<Permission> b=new ArrayList<>();
+                for(Permission permission:permissions){
+                    if(permission.getTypes()!=1){
+                        b.add(permission);
+                    }
+                }
+                permissions.removeAll(b);
                 for(int i=0;i<permissions.size();i++){
                     PermDto permDto=new PermDto();
                     Permission a=permissions.get(i);
@@ -124,6 +132,7 @@ public class PermissionSVImpl implements PermissionSV {
                     permDto.setName(a.getPermname());
                     permDto.setHref(a.getUrl());
                     List<PermDto> permDtoList=new ArrayList<>();
+                    //获取子菜单
                     for(Permission permission:permissions){
                         if(permission.getParentId()==a.getPid()){
                             PermDto p=new PermDto();
@@ -134,9 +143,10 @@ public class PermissionSVImpl implements PermissionSV {
                         }
                     }
                     permDto.setChildren(permDtoList);
-                    permDtos.add(permDto);
+                    if(permDto.getChildren()!=null && permDto.getChildren().size()!=0){
+                        permDtos.add(permDto);
+                    }
                 }
-                System.out.println(permDtos);
             }
         }
         map.put("code",0);
