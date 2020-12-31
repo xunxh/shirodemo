@@ -9,5 +9,5 @@ public interface RolePermissionRelationShipDao {
     List<RolePermissionRelationShip> getRolePermissionRelationShip(RolePermissionRelationShip rolePermissionRelationShip);
     int addRolePermRelationShip(RolePermissionRelationShip rolePermissionRelationShip);
     int updateRolePerm(RolePermissionRelationShip rolePermissionRelationShip);
-    int deleteRolePerByIds(@Param("ids")Integer[] ids);
+    int deleteRolePerByIds(@Param("ids")List<Integer> ids);
 }

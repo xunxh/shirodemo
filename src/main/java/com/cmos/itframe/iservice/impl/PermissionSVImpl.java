@@ -2,10 +2,7 @@ package com.cmos.itframe.iservice.impl;
 
 import com.cmos.itframe.beans.*;
 import com.cmos.itframe.beans.dto.PermDto;
-import com.cmos.itframe.dao.PermissionDao;
-import com.cmos.itframe.dao.RoleDao;
-import com.cmos.itframe.dao.RolePermissionRelationShipDao;
-import com.cmos.itframe.dao.UserRoleRelationShipDao;
+import com.cmos.itframe.dao.*;
 import com.cmos.itframe.iservice.PermissionSV;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -32,6 +29,9 @@ public class PermissionSVImpl implements PermissionSV {
     private RoleDao roleDao;
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private RolePermissionRelationShipDao rolePermissionRelationShipDao;
 
     @Override
@@ -45,6 +45,10 @@ public class PermissionSVImpl implements PermissionSV {
         maps.put("count",permissions.size());
         maps.put("data",pageInfo.getList());
         return maps;
+    }
+
+    public List<Permission> getPermission(){
+        return permissionDao.getAllPermissions(null);
     }
 
     @Override
@@ -87,11 +91,12 @@ public class PermissionSVImpl implements PermissionSV {
     @Override
     public Map getUserPerms() {
         //获取当前登录的用户
-        User user= (User) session.getAttribute("user");
+        String username= (String) session.getAttribute("username");
+        User user=userDao.getByUserName(username);
         //得到当前用户对应的角色
         UserRoleRelationShip roleRelationShip=new UserRoleRelationShip();
-//        roleRelationShip.setUid(user.getUid());
-        roleRelationShip.setUid(2);
+        roleRelationShip.setUid(user.getUid());
+//        roleRelationShip.setUid(2);
         List<UserRoleRelationShip> userRoleRelationShips= userRoleRelationShipDao.getUserRoleRelationships(roleRelationShip);
         Set<Integer> ids=new HashSet<>();
         List<Permission> permissions=new ArrayList<>();
@@ -104,10 +109,18 @@ public class PermissionSVImpl implements PermissionSV {
             }
             List<Role> roleList=roleDao.findRoleListByIds(ids);
             Role roleMax=new Role();
-            //得到最高级别的角色
-            for(int i=roleList.size()-1;i>=1;i--){
-                roleMax=roleList.get(i).getRoleLevel()<=roleList.get(i-1).getRoleLevel()?roleList.get(i):roleList.get(i-1);
+            if(CollectionUtils.isEmpty(roleList)){
+                return map;
             }
+            //得到最高级别的角色
+            if(roleList.size()>=1){
+                for(int i=0;i<roleList.size()-2;i++){
+                    roleMax=roleList.get(i).getRoleLevel()<=roleList.get(i+1).getRoleLevel()?roleList.get(i):roleList.get(i+1);
+                }
+            }else{
+                roleMax=roleList.get(0);
+            }
+
             RolePermissionRelationShip rolePermissionRelationShip=new RolePermissionRelationShip();
             rolePermissionRelationShip.setRid(roleMax.getRid());
             //得到角色拥有的权限信息

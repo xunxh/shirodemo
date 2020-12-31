@@ -1,9 +1,11 @@
 package com.cmos.itframe.web;
 
+import com.cmos.itframe.beans.dto.RPDto;
 import com.cmos.itframe.beans.dto.RolePermDto;
 import com.cmos.itframe.iservice.RolePermissionSV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,10 +25,14 @@ public class RolePermissionRelationShipController {
         return rolePermissionSV.addRolePermRelationShip(rolePermDto);
     }
 
-    //删除角色的某些权限
-    @RequestMapping("/deleteRolePerm")
-    public @ResponseBody Map deleteRolePerm(Integer[] ids){
-        return rolePermissionSV.deleteRolePermByPids(ids);
+    //修改角色的权限
+    @RequestMapping("/updateRolePerm")
+    public @ResponseBody Map updateRolePerm(@RequestBody RPDto permDto){
+//        System.out.println(data);
+//        RPDto permDto=new RPDto();
+
+        System.out.println(permDto);
+        return rolePermissionSV.updateRolePermByPids(permDto);
     }
 
     //获取某个角色的权限

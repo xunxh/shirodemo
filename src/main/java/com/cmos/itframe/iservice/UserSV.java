@@ -9,6 +9,8 @@ import java.util.Map;
 public interface UserSV {
     User getByUserName(String username);
 
+    String getPasswordByUsername(String username);
+
     User getUserById(Integer uid);
 
     Map addUser(User user);

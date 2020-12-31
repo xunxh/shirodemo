@@ -21,7 +21,7 @@
                     ,toolbar:"#caozuoToolbar"//id选择器的写法
                     ,cols: [
                         [ //表头
-                            {field: 'uid', title: 'ID', width:60, sort: true, fixed: 'left'}
+                            {field: 'uid', title: 'ID', width:50, sort: true, fixed: 'left'}
                             ,{field: 'username', title: '用户名称'}
                             ,{field: 'realName', title: '真实姓名'}
                             ,{field: 'status', title: '状态',templet:"#zhuangtai",width: 60}
@@ -29,7 +29,7 @@
                             ,{field: 'mobile', title: '联系方式'}
                             ,{field:'rolename', title: '角色',templet:"<div>{{d.roles[0].rolename}}</div>"}
                             , {field: 'remark', title: '备注'}
-                            ,{title:"操作",templet:"#caoZuo"}
+                            ,{title:"操作",templet:"#caoZuo",width: 100}
                         ]
                     ]
                 });
@@ -207,11 +207,93 @@
                });
 
            }
+            function doPermManage(id){
+                layui.config({
+                    base: '/shiro_demo/static/layui/'
+                }).extend({
+                    xmSelect: 'xm-select'
+                }).use(['xmSelect','form','table','layer','jquery','transfer'],function() {
+                    var xmSelect = layui.xmSelect;
+                    var form = layui.form;
+                    var table = layui.table;
+                    var layer = layui.layer;
+                    var $ = layui.jquery;
+                    var transfer = layui.transfer;
+                    $.ajax({
+                        url: "userRole/getUserRoles",
+                        data: "uid=" + id,
+                        success: function (data) {
+                            console.log(data.userId);
+                            $("#uid3").val(id);
+                            $("#username1").val(data.username);
+                            var items = data.userRoleRelationShips;
+                            demo = xmSelect.render({
+                                el: '#demo',
+                                hight: '300px',
+                                toolbar: {show: true},
+                                prop: {
+                                    name: 'rolename',
+                                    value: 'rid'
+                                },
+                                data: []
+                            })
+                            demo.update({
+                                data: items,
+                                selected:true,
+                                autoRow: true
+                            });
+                            //form.render("select");
+
+                        }
+                    });
+                    layui.use('layer', function () {
+                        layer.open({
+                            title: "修改权限信息",
+                            content: $("#permForm"),
+                            type: 1,
+                            area:['500px','400px']
+                            // maxmin:true
+                        })
+                    });
+                });
+            }
+
+            function doUpdateRolePerm(){
+                layui.use(["form","layer","table","jquery"],function () {
+                    var form = layui.form;
+                    var layer = layui.layer;
+                    var table = layui.table;
+                    // var data=demo.getValue('value');
+                    form.on("submit(updateUserRole)",function(data){
+                        // console.log(data.field);
+                        //alert(demo.getValue('value'));
+                        console.log('>>>', demo.getValue('value'));
+                        console.log('>>>',$("#username1").val());
+                        console.log('>>>',$("#uid3").val());
+                        $.ajax({
+                            url:"userRole/updateUserRole",
+                            data:JSON.stringify({"uid":$("#uid3").val(), "username":$("#username1").val(), "ids":demo.getValue('value')}),
+                            contentType:"application/json;charset=utf-8",
+                            dataType:"json",
+                            type:"post",
+                            success:function(data){
+
+                                layer.closeAll('page');
+
+                                table.reload("users");
+                            }
+                        })
+                        return false;//阻止跳转；
+                    });
+
+                });
+
+            }
     </script>
 
     <script id="caoZuo" type="text/html">
         <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.uid}}')">修改</button>
-
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.uid}}')">权限管理</button>
         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.uid}}')">删除</button>
     </script>
 
@@ -227,6 +309,29 @@
 <body>
 
     <table id="users"></table>
+
+    <div id="permForm" style="display: none" class="layui-form">
+        <input type="hidden" id="uid3" name="uid"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名称</label>
+            <div class="layui-input-inline">
+                <input name="username" id="username1" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="roles">
+            <div class="layui-inline">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-block" style="width:500px"  id="demo">
+
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" align="center">
+            <button lay-submit type="button" lay-filter="updateUserRole" class="layui-btn" onclick="doUpdateRolePerm()">修改权限</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
 
     <div id="caozuoToolbar" style="display: none">
         <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">

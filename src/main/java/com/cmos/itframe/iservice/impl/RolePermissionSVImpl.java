@@ -4,6 +4,7 @@ import com.cmos.itframe.beans.Permission;
 import com.cmos.itframe.beans.Role;
 import com.cmos.itframe.beans.RolePermissionRelationShip;
 import com.cmos.itframe.beans.dto.PermDto;
+import com.cmos.itframe.beans.dto.RPDto;
 import com.cmos.itframe.beans.dto.RolePermDto;
 import com.cmos.itframe.dao.PermissionDao;
 import com.cmos.itframe.dao.RoleDao;
@@ -48,15 +49,31 @@ public class RolePermissionSVImpl implements RolePermissionSV {
         return map;
     }
 
+
     @Override
-    public Map deleteRolePermByPids(Integer[] ids) {
+    public Map updateRolePermByPids(RPDto permDto) {
         Map map=new HashMap();
-        int i=rolePermissionRelationShipDao.deleteRolePerByIds(ids);
-        if(i>0){
-            map.put("isDelete",true);
-        }else{
-            map.put("idDelete",false);
+        Integer[] ids=permDto.getIds();
+        List<Integer> idss=new ArrayList<>();
+        RolePermissionRelationShip rp=new RolePermissionRelationShip();
+        rp.setRid(permDto.getRid());
+        List<RolePermissionRelationShip> rolePermissionRelationShips=rolePermissionRelationShipDao.getRolePermissionRelationShip(rp);
+        if(rolePermissionRelationShips.size()>0){
+            for(RolePermissionRelationShip r:rolePermissionRelationShips){
+                idss.add(r.getRpid());
+            }
+            rolePermissionRelationShipDao.deleteRolePerByIds(idss);
         }
+        for(int i=0;i<ids.length;i++){
+            RolePermissionRelationShip relationShip=new RolePermissionRelationShip();
+            relationShip.setRid(permDto.getRid());
+            relationShip.setPid(ids[i]);
+            List<RolePermissionRelationShip> rolePermissionRelationShip = rolePermissionRelationShipDao.getRolePermissionRelationShip(relationShip);
+            if(CollectionUtils.isEmpty(rolePermissionRelationShip)){
+                rolePermissionRelationShipDao.addRolePermRelationShip(relationShip);
+            }
+        }
+
         return map;
     }
 
@@ -75,7 +92,7 @@ public class RolePermissionSVImpl implements RolePermissionSV {
                 ids.add(relationShip.getPid());
             }
         }
-        List<Permission> permissions=permissionDao.getPermissionsByIds(ids);
+        List<Permission> permissions=permissionDao.getAllPermissions(null);
         rolePermDto.setPermissionList(permissions);
         return rolePermDto;
     }

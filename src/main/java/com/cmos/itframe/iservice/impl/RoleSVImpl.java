@@ -1,8 +1,13 @@
 package com.cmos.itframe.iservice.impl;
 
+import com.cmos.itframe.beans.Permission;
 import com.cmos.itframe.beans.Role;
+import com.cmos.itframe.beans.RolePermissionRelationShip;
 import com.cmos.itframe.beans.User;
+import com.cmos.itframe.beans.dto.RoleDto;
+import com.cmos.itframe.dao.PermissionDao;
 import com.cmos.itframe.dao.RoleDao;
+import com.cmos.itframe.dao.RolePermissionRelationShipDao;
 import com.cmos.itframe.iservice.RoleSV;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -16,6 +21,12 @@ public class RoleSVImpl implements RoleSV {
     @Autowired
     private RoleDao roleDao;
 
+    @Autowired
+    private PermissionDao permissionDao;
+
+    @Autowired
+    private RolePermissionRelationShipDao rolePermissionRelationShipDao;
+
     @Override
     public Map getRoles(String keyWord,Integer page,Integer limit) {
         if(page==null){
@@ -26,10 +37,34 @@ public class RoleSVImpl implements RoleSV {
         }
         Map maps=new HashMap();
         List<Role> roleList=roleDao.getRoles(keyWord);
+        List<Permission> permissions=permissionDao.getAllPermissions("");
+        Map<Integer,Permission> map1=new HashMap<>();
+        for(Permission p:permissions){
+            map1.put(p.getPid(),p);
+        }
+        List<RoleDto> roleDtos=new ArrayList<>();
+        for(Role r:roleList){
+            RoleDto roleDto=new RoleDto();
+            roleDto.setRid(r.getRid());
+            roleDto.setRemark(r.getRemark());
+            roleDto.setRoleLevel(r.getRoleLevel());
+            roleDto.setRolename(r.getRolename());
+            roleDto.setStatus(r.getStatus());
+            roleDto.setPermissions(new ArrayList<>());
+            RolePermissionRelationShip relationShip=new RolePermissionRelationShip();
+            relationShip.setRid(r.getRid());
+            List<RolePermissionRelationShip> permissionRelationShips=rolePermissionRelationShipDao.getRolePermissionRelationShip(relationShip);
+            for(RolePermissionRelationShip rp:permissionRelationShips){
+                if(map1.keySet().contains(rp.getPid())){
+                    roleDto.getPermissions().add(map1.get(rp.getPid()));
+                }
+            }
+            roleDtos.add(roleDto);
+        }
         //角色信息按照等级排序
-        Collections.sort(roleList, new Comparator<Role>() {
+        Collections.sort(roleDtos, new Comparator<RoleDto>() {
             @Override
-            public int compare(Role o1, Role o2) {
+            public int compare(RoleDto o1, RoleDto o2) {
                 if (o1.getRoleLevel() > o2.getRoleLevel()) {
                     return 1;
                 }
@@ -40,7 +75,7 @@ public class RoleSVImpl implements RoleSV {
             }
         });
         PageHelper.startPage(page,limit);
-        PageInfo<Role> pageInfo=new PageInfo<>(roleList);
+        PageInfo<RoleDto> pageInfo=new PageInfo<>(roleDtos);
         maps.put("code",0);
         maps.put("msg","");
         maps.put("count",roleList.size());

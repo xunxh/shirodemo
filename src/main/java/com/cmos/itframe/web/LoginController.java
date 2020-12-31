@@ -19,6 +19,7 @@ public class LoginController {
     @Autowired
     private PermissionSV permissionSV;
 
+
     @RequestMapping("/userlogin")
     public String login(String username,String password){
         //获取subject对象

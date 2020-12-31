@@ -12,4 +12,5 @@ public interface UserDao {
     User getById(@Param("id")Integer id);
     int updateUser(User user);
     List<User> getByKeyWord(@Param("keyWord") String keyWord);
+    String getPasswordByUsername(@Param("username") String username);
 }

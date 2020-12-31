@@ -1,6 +1,8 @@
 package com.cmos.itframe.web;
 
 import com.cmos.itframe.iservice.BookSV;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ public class BookController {
     @Autowired
     private BookSV bookSV;
 
+    @RequiresAuthentication
     @RequestMapping(value = "/getAllBooks",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getAllBooks(Integer page, Integer limit){

@@ -34,6 +34,11 @@ public class UserSVImpl implements UserSV {
         return userDao.getByUserName(username);
     }
 
+    @Override
+    public String getPasswordByUsername(String username) {
+        return userDao.getPasswordByUsername(username);
+    }
+
     //查询单个用户信息
     @Override
     public User getUserById(Integer uid) {
@@ -132,19 +137,6 @@ public class UserSVImpl implements UserSV {
                     }
                 }
             }
-            //角色信息按照等级排序
-            Collections.sort(roleList, new Comparator<Role>() {
-                @Override
-                public int compare(Role o1, Role o2) {
-                    if (o1.getRoleLevel() > o2.getRoleLevel()) {
-                        return 1;
-                    }
-                    if (o1.getRoleLevel() == o2.getRoleLevel()) {
-                        return 0;
-                    }
-                    return -1;
-                }
-            });
             if(roleList.size()==0){
                 Role role=new Role();
                 role.setRolename(" ");

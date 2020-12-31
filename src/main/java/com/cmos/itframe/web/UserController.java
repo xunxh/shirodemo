@@ -3,6 +3,8 @@ package com.cmos.itframe.web;
 import com.cmos.itframe.beans.User;
 import com.cmos.itframe.iservice.UserRoleSV;
 import com.cmos.itframe.iservice.UserSV;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ public class UserController {
     private UserRoleSV userRoleSV;
 
     //查询全部用户信息
+//    @RequiresPermissions("查看用户")
     @RequestMapping("/getUsers")
     public @ResponseBody Map getUsers(@RequestParam(value = "page",required = false) Integer page,
                  @RequestParam(value = "limit",required = false) Integer limit,

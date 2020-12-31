@@ -17,4 +17,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <delete id="deleteByIds">
+        delete from user_role
+        where urid in
+        <foreach collection="ids" item="id" open="(" separator="," close=")" index="index">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertUserRole">
+        insert into user_role values(default ,#{uid},${rid})
+    </insert>
+
 </mapper>

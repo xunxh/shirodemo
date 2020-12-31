@@ -6,17 +6,16 @@ public class Book {
     private String auth;
     private Double price;
     private Integer counts;
+    private String remark;
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "bid=" + bid +
-                ", bname='" + bname + '\'' +
-                ", auth='" + auth + '\'' +
-                ", price=" + price +
-                ", counts=" + counts +
-                '}';
+    public String getRemark() {
+        return remark;
     }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
 
     public Book(Integer bid, String bname, String auth, Double price, Integer counts) {
         this.bid = bid;

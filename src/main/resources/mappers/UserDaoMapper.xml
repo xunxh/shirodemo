@@ -4,8 +4,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cmos.itframe.dao.UserDao">
 
+    <select id="getPasswordByUsername" resultType="java.lang.String">
+        select password from user where username=#{username}
+    </select>
     <select id="getByUserName" resultType="com.cmos.itframe.beans.User">
-      select password from user where username=#{username}
+      select * from user where username=#{username}
     </select>
     <insert id="addUser">
         insert into user(uid,username,realName,password,status,email,mobile,createTime,updateTime,remark) values(0,#{username},#{realName},#{password},#{status},#{email},#{mobile},sysdate(),sysdate(),#{remark})

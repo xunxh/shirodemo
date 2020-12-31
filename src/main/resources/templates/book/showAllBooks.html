@@ -8,20 +8,20 @@
     <script>
             layui.use('table', function(){
                 var table = layui.table;
-                alert(1);
                 //第一个实例
                 table.render({
                     elem: '#books'
                     ,url: 'books/getAllBooks' //数据接口
                     ,page: true //开启分页
-                    ,limit:5
+                    ,limit:10
                     ,cols: [
                         [ //表头
-                            {field: 'bid', title: 'ID', width:80, sort: true, fixed: 'left'}
-                            ,{field: 'bname', title: '书名', width:80}
-                            ,{field: 'auth', title: '作者', width:80}
-                            ,{field: 'price', title: '价格', width:80}
-                            ,{field: 'counts', title: '库存', width: 177}
+                            {field: 'bid', title: 'ID',  sort: true, fixed: 'left'}
+                            ,{field: 'bname', title: '书名'}
+                            ,{field: 'auth', title: '作者'}
+                            ,{field: 'price', title: '价格'}
+                            ,{field: 'counts', title: '库存'}
+                            ,{field: 'remark',title: '备注'}
                         ]
                     ]
                 });

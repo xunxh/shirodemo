@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="addRolePermRelationShip">
-        insert into role_permission(rpid,rid,pid) values(0,#{rid},#{pid})
+        insert into role_permission(rpid,rid,pid) values(default,#{rid},#{pid})
     </insert>
 
     <update id="updateRolePerm">
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteRolePerByIds">
         delete from role_permission
-        where pid in
+        where rpid in
         <foreach collection="ids" item="id" open="(" separator="," close=")" index="index">
             #{id}
         </foreach>

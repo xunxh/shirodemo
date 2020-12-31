@@ -3,6 +3,7 @@ package com.cmos.itframe.iservice;
 
 import com.cmos.itframe.beans.Permission;
 
+import java.util.List;
 import java.util.Map;
 
 public interface PermissionSV {
@@ -11,5 +12,6 @@ public interface PermissionSV {
     Map updatePermission(Permission permission);
     Map deletePermissionById(Integer pid);
     Map getUserPerms();
+    List<Permission> getPermission();
     Permission getPermissionById(Integer pid);
 }

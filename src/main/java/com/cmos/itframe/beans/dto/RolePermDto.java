@@ -6,18 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RolePermDto {
-    private Integer rpid;
     private Integer rid;
     private String rolename;
     private List<Permission> permissionList;
-
-    public Integer getRpid() {
-        return rpid;
-    }
-
-    public void setRpid(Integer rpid) {
-        this.rpid = rpid;
-    }
 
     public Integer getRid() {
         return rid;
