@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.dao.PermissionDao">
+<mapper namespace="com.itframe.dao.PermissionDao">
 
-    <select id="getAllPermissions" resultType="com.cmos.itframe.beans.Permission">
+    <select id="getAllPermissions" resultType="com.itframe.beans.Permission">
         select pid,permname,url,types,parentId,remark from permission
         <where>
             <if test="keyWord != null and keyWord != ''">
@@ -43,11 +43,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from permission where pid=#{pid}
     </delete>
 
-    <select id="getPermissionById" resultType="com.cmos.itframe.beans.Permission">
+    <select id="getPermissionById" resultType="com.itframe.beans.Permission">
         select pid,permname,url,types,parentId,remark from permission where pid=#{pid}
     </select>
 
-    <select id="getPermissionsByIds" resultType="com.cmos.itframe.beans.Permission">
+    <select id="getPermissionsByIds" resultType="com.itframe.beans.Permission">
         select pid,permname,url,types,parentId,remark from permission
         <if test="ids != null and ids.size() > 0 ">
             where pid in

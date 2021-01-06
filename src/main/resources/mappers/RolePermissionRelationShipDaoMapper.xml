@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.dao.RolePermissionRelationShipDao">
+<mapper namespace="com.itframe.dao.RolePermissionRelationShipDao">
 
-    <select id="getRolePermissionRelationShip" resultType="com.cmos.itframe.beans.RolePermissionRelationShip">
+    <select id="getRolePermissionRelationShip" resultType="com.itframe.beans.RolePermissionRelationShip">
         select rid,pid from role_permission
         <where>
             <if test="rid !=null">

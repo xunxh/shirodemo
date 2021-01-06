@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8"/>
     <title>所有用户信息</title>
@@ -194,7 +195,7 @@
                    var $ = layui.jquery;
                    layer.confirm('确定真的要把我干掉吗？', {icon: 3, title:'确认删除'}, function(index){
                        $.ajax({
-                           url:"users/deleteUser",
+                           url:"users/deleteUserById",
                            data:"uid="+id,
                            success:function(data){
                                layer.alert(data.isDelete,{time:2000});
@@ -292,9 +293,9 @@
     </script>
 
     <script id="caoZuo" type="text/html">
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.uid}}')">修改</button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.uid}}')">权限管理</button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.uid}}')">删除</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.uid}}')" shiro:hasPermission="修改用户">修改</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.uid}}')" shiro:hasPermission="权限管理">权限管理</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.uid}}')" shiro:hasPermission="删除用户">删除</button>
     </script>
 
     <script type="text/html" id="zhuangtai">
@@ -334,7 +335,7 @@
     </div>
 
     <div id="caozuoToolbar" style="display: none">
-        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()" shiro:hasPermission="添加用户">
             <i class="layui-icon">&#xe608;</i> 添加
         </button>
         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doMultiDelete()">

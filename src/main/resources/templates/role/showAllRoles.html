@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8"/>
     <title>所有角色信息</title>
@@ -227,11 +228,18 @@
                            demo = xmSelect.render({
                                el: '#demo',
                                hight: '300px',
-                               toolbar: {show: true},
+                               name:'permIds',
+                               toolbar: {
+                                   show: true,
+                                   list:['ALL','CLEAR','REVERSE']
+                               },
                                prop: {
                                    name: 'permname',
                                    value: 'pid'
                                },
+                               filterable: true,
+                               paging:true,
+                               autoRow: true,
                                data: []
                            })
                            demo.update({
@@ -249,6 +257,7 @@
                            content: $("#permForm"),
                            type: 1,
                            area:['500px','400px']
+                           
                            // maxmin:true
                        })
                    });
@@ -295,9 +304,9 @@
 
 
     <script id="caoZuo" type="text/html">
-        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenUpdateLayer('{{d.rid}}')">信息修改</button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.rid}}')">权限管理</button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.rid}}')">删除角色</button>
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenUpdateLayer('{{d.rid}}')" shiro:hasPermission="修改角色">信息修改</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doPermManage('{{d.rid}}')" shiro:hasPermission="权限管理">权限管理</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.rid}}')" shiro:hasPermission="删除角色">删除角色</button>
     </script>
     <script type="text/html" id="quanxian">
         <ul>
@@ -327,7 +336,7 @@
 
     <div id="caozuoToolbar" style="display: none">
 
-        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()" shiro:hasPermission="添加角色">
             <i class="layui-icon">&#xe608;</i> 添加
         </button>
         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doMultiDelete()">
@@ -397,6 +406,7 @@
         <div class="layui-form-item" id="permissions">
             <div class="layui-inline">
                 <label class="layui-form-label">权限名称</label>
+                <input type="hidden" id="permIds">
                 <div class="layui-input-block" style="width:500px"  id="demo">
 
                 </div>

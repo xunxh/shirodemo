@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.dao.BookDao">
+<mapper namespace="com.itframe.dao.BookDao">
 
-   <select id="getAll" resultType="com.cmos.itframe.beans.Book">
+   <select id="getAll" resultType="com.itframe.beans.Book">
        select * from book limit #{offset},#{limit}
    </select>
     <select id="getNum" resultType="int">

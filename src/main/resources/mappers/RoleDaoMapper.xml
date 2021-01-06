@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cmos.itframe.dao.RoleDao">
+<mapper namespace="com.itframe.dao.RoleDao">
 
-    <select id="findRoleListByIds" resultType="com.cmos.itframe.beans.Role">
+    <select id="findRoleListByIds" resultType="com.itframe.beans.Role">
         select rid,rolename,roleLevel,status,remark from role
         <if test="ids != null and ids.size() > 0 ">
             where rid in
@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
-    <select id="getRoles" resultType="com.cmos.itframe.beans.Role">
+    <select id="getRoles" resultType="com.itframe.beans.Role">
         select rid,rolename,roleLevel,status,remark from role
         <where>
             <if test="keyWord != null and keyWord != ''">
@@ -50,15 +50,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into role(rid,rolename,roleLevel,status,remark) values(0,#{rolename},#{roleLevel},#{status},#{remark})
     </insert>
 
-    <select id="getRoleById" resultType="com.cmos.itframe.beans.Role">
+    <select id="getRoleById" resultType="com.itframe.beans.Role">
         select rid,rolename,roleLevel,status,remark from role where rid=#{rid}
     </select>
 
-    <select id="getAllRoles" resultType="com.cmos.itframe.beans.Role">
+    <select id="getAllRoles" resultType="com.itframe.beans.Role">
         select rid,rolename,roleLevel,status,remark from role
     </select>
 
-    <select id="getRoleIdAndRoleName" resultType="com.cmos.itframe.beans.Role">
+    <select id="getRoleIdAndRoleName" resultType="com.itframe.beans.Role">
         select rid,rolename,roleLevel from role
     </select>
 

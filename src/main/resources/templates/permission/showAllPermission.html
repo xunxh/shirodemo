@@ -191,9 +191,9 @@
     </script>
 
     <script id="caoZuo" type="text/html">
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.pid}}')">修改</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="doOpenUpdateLayer('{{d.pid}}')" shiro:hasPermission="修改权限">修改</button>
 
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.pid}}')">删除</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doDelete('{{d.pid}}')" shiro:hasPermission="删除权限">删除</button>
     </script>
 
     <script type="text/html" id="zhuangtai">
@@ -211,7 +211,7 @@
 
     <div id="caozuoToolbar" style="display: none">
 
-        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()">
+        <button type="button" class="layui-btn layui-btn-sm" onclick="doOpenAddLayer()" shiro:hasPermission="添加权限">
             <i class="layui-icon">&#xe608;</i> 添加
         </button>
         <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="doMultiDelete()">
